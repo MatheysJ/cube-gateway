@@ -3,11 +3,37 @@ spring:
         name: cube-gateway
 
     cloud:
+        gateway:
+            discovery:
+                locator:
+                    enabled: true
+
         openfeign:
             client:
                 config:
                     cubeMsUser:
-                        url: http
+                        url: http://localhost:8080
+
+        globalcors:
+            cors-configurations:
+                '[/**]':
+                    allowedOrigins: "http://localhost:3000"
+                    allowedMethods: "*"
+                    allowedHeaders: "*"
+
+        routes:
+            - id: cube-user-auth
+              uri: http://localhost:8080
+              predicates:
+                  - Path=/v1/auth/**
+              filters:
+                  - AuthenticationFilter
+            - id: cube-order
+              uri: http://localhost:8082
+              predicates:
+                  - Path=/v1/order/**
+              filters:
+                  - AuthenticationFilter
 
     config:
         import: optional:configserver:http://localhost:8888
