@@ -31,7 +31,7 @@ spring:
     config:
         import: optional:configserver:http://localhost:8888
 token:
-    secret: "${JWT_SECRET:0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF}"
+    secret: "${JWT_SECRET}"
 
 server:
     port: 8089
