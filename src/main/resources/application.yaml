@@ -1,0 +1,40 @@
+spring:
+    application:
+        name: cube-gateway
+    cloud:
+        gateway:
+            discovery:
+                locator:
+                    enabled: true
+            routes:
+                - id: cube-user-auth
+                  uri: lb://cube-ms-user
+                  predicates:
+                      - Path=/v1/auth/**
+                  filters:
+                      - AuthenticationFilter
+                - id: CUBE-MS-ORDER
+                  uri: lb://CUBE-MS-ORDER
+                  predicates:
+                      - Path=/v1/order/**
+                  filters:
+                      - AuthenticationFilter
+            globalcors:
+                cors-configurations:
+                    '[/**]':
+                        allowedOrigins: "http://localhost:3000"
+                        allowedMethods: "*"
+                        allowedHeaders: "*"
+                        allowCredentials: "true"
+        loadbalancer:
+            ribbon:
+                enabled: false
+    config:
+        import: optional:configserver:http://localhost:8888
+token:
+    secret: "${JWT_SECRET}"
+
+server:
+    port: 8089
+    error:
+        include-message: always
