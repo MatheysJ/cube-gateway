@@ -19,12 +19,13 @@ spring:
                       - Path=/v1/order/**
                   filters:
                       - AuthenticationFilter
-        globalcors:
-            cors-configurations:
-                '[/**]':
-                    allowedOrigins: "http://localhost:3000"
-                    allowedMethods: "*"
-                    allowedHeaders: "*"
+            globalcors:
+                cors-configurations:
+                    '[/**]':
+                        allowedOrigins: "http://localhost:3000"
+                        allowedMethods: "*"
+                        allowedHeaders: "*"
+                        allowCredentials: "true"
         loadbalancer:
             ribbon:
                 enabled: false
