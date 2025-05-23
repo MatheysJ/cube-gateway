@@ -10,13 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.List;
 
 @Slf4j
 @Component
@@ -38,22 +38,16 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         return (exchange, chain) -> {
             if (validator.isSecured.test(exchange.getRequest())) {
                 log.info("Route is secured");
-                List<String> authHeaders = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION);
+
+                MultiValueMap<String,HttpCookie> cookies = exchange.getRequest().getCookies();
+                HttpCookie accessTokenCookie = cookies.getFirst("accessToken");
 
                 try {
-                    if (authHeaders == null || authHeaders.isEmpty()) {
+                    if (accessTokenCookie == null) {
                         log.error("To access this resource, you must be authenticated.");
                         throw new SecurityException("To access this resource, you must be authenticated.");
                     }
-
-                    String authHeader = authHeaders.getFirst();
-
-                    if (!authHeader.startsWith("Bearer ")) {
-
-                        throw new SecurityException("Invalid or expired token.");
-                    }
-
-                    String token = authHeader.substring(7);
+                    String token = accessTokenCookie.getValue();
 
                     Key key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 
