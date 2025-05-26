@@ -7,12 +7,18 @@ spring:
                 locator:
                     enabled: true
             routes:
-                - id: cube-user-auth
-                  uri: lb://cube-ms-user
+                - id: CUBE-MS-USER-AUTH
+                  uri: lb://CUBE-MS-USER
                   predicates:
                       - Path=/v1/auth/**
+
+                - id: CUBE-MS-USER-CUSTOMER
+                  uri: lb://CUBE-MS-USER
+                  predicates:
+                      - Path=/v1/customer/**
                   filters:
                       - AuthenticationFilter
+
                 - id: CUBE-MS-ORDER
                   uri: lb://CUBE-MS-ORDER
                   predicates:
