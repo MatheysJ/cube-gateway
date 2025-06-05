@@ -58,9 +58,11 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                             .getBody();
 
                     String username = claims.getSubject();
+                    String asaasId = claims.get("asaas_customer_id", String.class);
 
                     exchange = exchange.mutate()
                             .request(builder -> builder.header("customer_id", username))
+                            .request(builder -> builder.header("asaas_customer_id", asaasId))
                             .build();
 
                 } catch (ExpiredJwtException e) {
