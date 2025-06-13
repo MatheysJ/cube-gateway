@@ -40,6 +40,10 @@ spring:
 token:
     secret: "${JWT_SECRET}"
 
+asaas:
+  access:
+    token: "${ASAAS_ACCESS_TOKEN}"
+
 server:
     port: 8089
     error:

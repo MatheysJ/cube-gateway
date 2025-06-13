@@ -17,6 +17,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -28,6 +29,9 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     @Value("${token.secret}")
     private String secret;
 
+    @Value("${asaas.access.token}")
+    private String asaasAccessToken;
+
     public AuthenticationFilter() {
         super(Config.class);
     }
@@ -36,7 +40,32 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     public GatewayFilter apply(Config config) {
         log.info("Gateway filter started");
         return (exchange, chain) -> {
-            if (validator.isSecured.test(exchange.getRequest())) {
+            if (validator.isWebHook.test(exchange.getRequest())) {
+                log.info("WebHook Route");
+
+                try {
+                    List<String> asaasTokenHeaders = exchange.getRequest().getHeaders().get("asaas-access-token");
+
+                    if (asaasTokenHeaders == null || asaasTokenHeaders.isEmpty()) {
+                        log.error("WebHook call with invalid headers.");
+
+                        throw new SecurityException("To access this resource, you must be authenticated.");
+                    }
+
+                    String asaasToken = asaasTokenHeaders.getFirst();
+
+                    if (!asaasAccessToken.equals(asaasToken)) {
+                        log.error("WebHook call failed with invalid token!");
+
+                        throw new SecurityException("Invalid credentials");
+                    }
+
+                } catch (Exception e) {
+                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+
+                    return exchange.getResponse().setComplete();
+                }
+            } else if (validator.isSecured.test(exchange.getRequest())) {
                 log.info("Route is secured");
 
                 MultiValueMap<String,HttpCookie> cookies = exchange.getRequest().getCookies();
@@ -61,8 +90,10 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     String asaasId = claims.get("asaas_customer_id", String.class);
 
                     exchange = exchange.mutate()
-                            .request(builder -> builder.header("customer_id", username))
-                            .request(builder -> builder.header("asaas_customer_id", asaasId))
+                            .request(builder -> builder
+                                    .header("customer_id", username)
+                                    .header("asaas_customer_id", asaasId)
+                            )
                             .build();
 
                 } catch (ExpiredJwtException e) {
