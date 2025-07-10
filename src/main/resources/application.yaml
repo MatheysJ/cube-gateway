@@ -43,8 +43,8 @@ eureka:
     client:
         registerWithEureka: true
         fetchRegistry: true
-    serviceUrl:
-        defaultZone: ${EUREKA_URL:https://cube-ms-eureka.onrender.com:8761/eureka/}
+        serviceUrl:
+            defaultZone: ${EUREKA_URL:https://cube-ms-eureka.onrender.com:8761/eureka/}
 server:
     port: 8089
     error:
