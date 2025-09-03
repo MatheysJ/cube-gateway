@@ -35,7 +35,11 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     @Override
     public GatewayFilter apply(Config config) {
         log.info("Gateway filter started");
+
         return (exchange, chain) -> {
+
+            log.info("Initializing route filter for {}", exchange.getRequest().getURI());
+
             if (validator.isSecured.test(exchange.getRequest())) {
                 log.info("Route is secured");
 
@@ -44,7 +48,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
 
                 try {
                     if (accessTokenCookie == null) {
-                        log.error("To access this resource, you must be authenticated.");
+                        log.error("There is no cookie. To access this resource, you must be authenticated.");
                         throw new SecurityException("To access this resource, you must be authenticated.");
                     }
                     String token = accessTokenCookie.getValue();
@@ -58,6 +62,8 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                             .getBody();
 
                     String username = claims.getSubject();
+
+                    log.info("User {} identified!", username);
 
                     exchange = exchange.mutate()
                             .request(builder -> builder.header("customer_id", username))
