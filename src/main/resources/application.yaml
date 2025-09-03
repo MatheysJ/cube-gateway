@@ -28,7 +28,7 @@ spring:
             globalcors:
                 cors-configurations:
                     '[/**]':
-                        allowedOrigins: ["localhost", "matheus-junior.xyz", "ngrok-free.app"]
+                        allowedOrigins: ["https://cube.matheus-junior.xyz"]
                         allowedMethods: "*"
                         allowedHeaders: "*"
                         allowCredentials: "true"
