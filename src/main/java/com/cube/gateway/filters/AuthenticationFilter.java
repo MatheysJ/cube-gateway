@@ -98,7 +98,6 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                             .request(builder -> builder
                                     .header("customer_id", username)
                                     .header("asaas_customer_id", asaasId)
-                                    .header("ngrok-skip-browser-warning", "69420")
                             )
                             .build();
 
@@ -113,6 +112,12 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                 }
 
             }
+
+            exchange = exchange.mutate()
+                    .request(builder -> builder
+                            .header("ngrok-skip-browser-warning", "69420")
+                    )
+                    .build();
 
             log.info("Gateway filter end");
 
