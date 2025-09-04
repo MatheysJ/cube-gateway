@@ -28,7 +28,7 @@ spring:
             globalcors:
                 cors-configurations:
                     '[/**]':
-                        allowedOrigins: "http://localhost:3000"
+                        allowedOrigins: ["https://cube.matheus-junior.xyz"]
                         allowedMethods: "*"
                         allowedHeaders: "*"
                         allowCredentials: "true"
@@ -44,7 +44,13 @@ asaas:
   access:
     token: "${ASAAS_ACCESS_TOKEN}"
 
+eureka:
+    client:
+        registerWithEureka: true
+        fetchRegistry: true
+        serviceUrl:
+            defaultZone: ${EUREKA_URL:https://cube-ms-eureka.onrender.com/eureka/}
 server:
-    port: 8089
+    port: ${PORT:8080}
     error:
         include-message: always
