@@ -39,6 +39,11 @@ spring:
         import: optional:configserver:http://localhost:8888
 token:
     secret: "${JWT_SECRET}"
+
+asaas:
+  access:
+    token: "${ASAAS_ACCESS_TOKEN}"
+
 eureka:
     client:
         registerWithEureka: true

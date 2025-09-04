@@ -15,6 +15,13 @@ public class RouteValidator {
             "/v1/auth/validate"
     );
 
+    public static final List<String> webHooksEndpoints = List.of(
+            "/v1/order/status"
+    );
+
     public Predicate<ServerHttpRequest> isSecured =
             request -> openEndpoints.stream().noneMatch(uri -> request.getURI().getPath().contains(uri));
+
+    public Predicate<ServerHttpRequest> isWebHook =
+            request -> webHooksEndpoints.stream().anyMatch(uri -> request.getURI().getPath().contains(uri));
 }
