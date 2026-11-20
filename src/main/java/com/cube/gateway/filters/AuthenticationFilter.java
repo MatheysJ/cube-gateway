@@ -102,6 +102,9 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                             )
                             .build();
 
+                } catch (SecurityException e) {
+                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                    return exchange.getResponse().setComplete();
                 } catch (ExpiredJwtException e) {
                     log.error("Token is expired");
                     exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
