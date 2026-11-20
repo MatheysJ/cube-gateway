@@ -24,9 +24,9 @@ jobs:
       JWT_SECRET: ci-test-secret
       ASAAS_ACCESS_TOKEN: ci-test-token
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "21"
@@ -40,7 +40,7 @@ jobs:
 
       - name: Publicar relatórios de teste
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: surefire-reports
           path: target/surefire-reports/
